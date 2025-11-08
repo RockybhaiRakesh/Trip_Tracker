@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Driver Trip Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --muted: #334155;
+      --text: #f1f5f9;
+      --sub: #94a3b8;
+      --accent: #22c55e;
+      --accent-2: #3b82f6;
+      --warn: #ef4444;
+      --card: #0b1220;
+      --chip: #334155;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --glow: 0 0 15px rgba(34, 197, 94, 0.3);
+      --transition: all 0.3s ease;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      max-width: 500px;
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-icon {
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow);
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin: 0;
+    }
+    
+    .badge {
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .stats::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .chip {
+      background: var(--chip);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      flex-shrink: 0;
+      min-width: 120px;
+    }
+    
+    .chip i {
+      color: var(--accent);
+    }
+    
+    .chip:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+    
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      margin-bottom: 20px;
+    }
+    
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-title {
+      margin: 0;
+      font-size: 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card-content {
+      padding: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    label i {
+      color: var(--accent);
+      width: 16px;
+      text-align: center;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      outline: none;
+      transition: var(--transition);
+      font-size: 16px; /* Prevents zoom on iOS */
+      -webkit-appearance: none;
+    }
+    
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+    }
+    
+    input::placeholder {
+      color: #64748b;
+    }
+    
+    /* Custom styling for date and time inputs */
+    input[type="date"], input[type="time"] {
+      position: relative;
+    }
+    
+    .inline-input {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .inline-input .input-wrapper {
+      flex: 1;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    
+    button {
+      border: 0;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      color: white;
+      background: var(--accent);
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      font-size: 15px;
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    button:active {
+      transform: scale(0.98);
+    }
+    
+    button.secondary {
+      background: var(--accent-2);
+    }
+    
+    button.ghost {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+    
+    button.danger {
+      background: var(--warn);
+    }
+    
+    button.small {
+      padding: 10px 14px;
+      font-size: 13px;
+      min-width: auto;
+      flex: none;
+    }
+    
+    .mini {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .search-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .search-container input {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .tabs {
+      display: flex;
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius-sm);
+      margin-top: 16px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 600px;
+    }
+    
+    th, td {
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
+    }
+    
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+      z-index: 1;
+      font-weight: 600;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+    
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tbody tr {
+      transition: var(--transition);
+    }
+    
+    tbody tr:active {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .muted {
+      color: var(--sub);
+    }
+    
+    .right {
+      text-align: right;
+    }
+    
+    .center {
+      text-align: center;
+    }
+    
+    .dropdown {
+      position: relative;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--panel);
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      border-radius: var(--radius-sm);
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .dropdown-content button {
+      width: 100%;
+      border-radius: 0;
+      justify-content: flex-start;
+    }
+    
+    .dropdown.active .dropdown-content {
+      display: block;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--sub);
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    /* Swipeable tabs for mobile */
+    .swipe-area {
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .swipe-container {
+      display: flex;
+      transition: transform 0.3s ease;
+    }
+    
+    .swipe-page {
+      min-width: 100%;
+      padding: 0;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 380px) {
+      .container {
+        padding: 12px;
+      }
+      
+      .chip {
+        padding: 10px 12px;
+        min-width: 110px;
+      }
+      
+      button {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      
+      .card-content {
+        padding: 12px;
+      }
+    }
+    
+    /* Prevent text size adjustment on orientation change */
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    /* Improved touch targets */
+    input, button, select {
+      min-height: 44px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fas fa-road"></i>
+        </div>
+        <h1>Trip Tracker</h1>
+      </div>
+      <span class="badge">PRO</span>
+    </header>
+
+    <div class="stats" id="topStats">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="form">Add Trip</div>
+      <div class="tab" data-tab="history">History</div>
+    </div>
+
+    <!-- Form Tab -->
+    <div class="tab-content active" id="formTab">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-plus-circle"></i>
+            New Trip
+          </h2>
+          <small class="muted" id="editHint"></small>
+        </div>
+        <div class="card-content">
+          <form id="tripForm">
+            <div class="form-group">
+              <label for="date"><i class="fas fa-calendar-alt"></i> Date</label>
+              <input type="date" id="date" required />
+            </div>
+
+            <div class="form-group">
+              <label for="name"><i class="fas fa-user"></i> User Name</label>
+              <div class="inline-input">
+                <div class="input-wrapper">
+                  <input type="text" id="name" list="namesList" placeholder="Select or type name" required />
+                </div>
+                <button type="button" class="ghost small" id="addNameBtn" title="Add name to list">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <datalist id="namesList"></datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="pickup"><i class="fas fa-map-marker-alt"></i> Start Location</label>
+              <input type="text" id="pickup" placeholder="Where from?" required />
+              <small class="mini"><i class="fas fa-info-circle"></i> Default: DAREHOUSE</small>
+            </div>
+
+            <div class="form-group">
+              <label for="to"><i class="fas fa-flag-checkered"></i> TO Location</label>
+              <div class="inline-input">
+                <div class="input-wrapper">
+                  <input type="text" id="to" list="toList" placeholder="Select or type destination" required />
+                </div>
+                <button type="button" class="ghost small" id="addToBtn" title="Add TO to list">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <datalist id="toList"></datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="destination"><i class="fas fa-flag-checkered"></i> Destination</label>
+              <div class="inline-input">
+                <div class="input-wrapper">
+                  <input type="text" id="destination" list="destinationList" placeholder="Select or type destination" required />
+                </div>
+                <button type="button" class="ghost small" id="addDestinationBtn" title="Add destination to list">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <datalist id="destinationList"></datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="returnLoc"><i class="fas fa-undo"></i> Return Location</label>
+              <input type="text" id="returnLoc" placeholder="Return/back to…" />
+              <small class="mini"><i class="fas fa-info-circle"></i> Default: DAREHOUSE</small>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-tachometer-alt"></i> Start KM & Time</label>
+              <div class="inline-input">
+                <div class="input-wrapper">
+                  <input type="number" id="startKm" min="0" step="0.1" placeholder="Start KM" required />
+                </div>
+                <div class="input-wrapper">
+                  <input type="time" id="startTime" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-tachometer-alt"></i> End KM & Time</label>
+              <div class="inline-input">
+                <div class="input-wrapper">
+                  <input type="number" id="endKm" min="0" step="0.1" placeholder="End KM" required />
+                </div>
+                <div class="input-wrapper">
+                  <input type="time" id="endTime" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" id="saveBtn">
+                <i class="fas fa-save"></i> Save
+              </button>
+              <button type="button" class="secondary" id="resetBtn">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+              <button type="button" class="ghost" id="autoKmBtn">
+                <i class="fas fa-magic"></i> Auto KM
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div class="tab-content" id="historyTab">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="fas fa-list"></i> Trip History
+          </h2>
+          <div class="search-container">
+            <input id="search" placeholder="Search..." aria-label="Search" />
+            <div class="dropdown" id="historyDropdown">
+              <button class="ghost small">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <div class="dropdown-content">
+                <button class="ghost" id="exportCsvBtn">
+                  <i class="fas fa-file-export"></i> Export CSV
+                </button>
+                <button class="ghost danger" id="clearAllBtn">
+                  <i class="fas fa-trash"></i> Clear All
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="table-container">
+            <table aria-describedby="tableHelp">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>User</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th class="right">KM</th>
+                  <th class="center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+              <i class="fas fa-road"></i>
+              <h3>No Trips Recorded</h3>
+              <p>Add your first trip using the form</p>
+            </div>
+          </div>
+          <p id="tableHelp" class="muted" style="margin-top:12px; font-size: 12px;">
+            <i class="fas fa-lightbulb"></i> Tap a row's edit icon to modify or duplicate icon to copy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const STORE_KEY = 'driverTrips.mobile.v1';
+    const STORE_LISTS = 'driverTrips.lists.mobile.v1';
+
+    let trips = loadTrips();
+    let lists = loadLists();
+    let editingId = null;
+
+    // Initialize the application
+    function init() {
+      // Set default date to today
+      document.getElementById('date').valueAsNumber = Date.now() - (new Date().getTimezoneOffset() * 60_000);
+      
+      // Populate datalists
+      hydrateDatalist('namesList', lists.names);
+      hydrateDatalist('toList', lists.to);
+      hydrateDatalist('destinationList', lists.destinations);
+      
+      // Set default values
+      document.getElementById('pickup').value = 'DAREHOUSE';
+      document.getElementById('returnLoc').value = 'DAREHOUSE';
+      
+      // Set up auto KM calculation
+      setupAutoKm();
+      
+      // Add event listeners
+      setupEventListeners();
+      
+      // Render the initial view
+      render();
+      
+      // Auto-populate start KM with last trip's end KM
+      autoPopulateStartKm();
+    }
+
+    // Auto-populate start KM with last trip's end KM
+    function autoPopulateStartKm() {
+      if (trips.length > 0 && !editingId) {
+        const lastTrip = trips[0];
+        const lastEndKm = lastTrip.endKm;
+        
+        if (lastEndKm && !isNaN(lastEndKm)) {
+          document.getElementById('startKm').value = lastEndKm;
+          showToast(`Auto-filled Start KM: ${lastEndKm}`);
+        }
+      }
+    }
+
+    // Set up auto KM calculation
+    function setupAutoKm() {
+      const startKmInput = document.getElementById('startKm');
+      const endKmInput = document.getElementById('endKm');
+      
+      // When start KM changes, suggest end KM
+      startKmInput.addEventListener('change', () => {
+        const startKm = parseFloat(startKmInput.value);
+        if (!isNaN(startKm) && startKm > 0) {
+          // Calculate suggested end KM (50 km more than start)
+          const suggestedEndKm = startKm + 50;
+          endKmInput.value = suggestedEndKm;
+          showToast(`Auto-filled End KM: ${suggestedEndKm}`);
+        }
+      });
+      
+      // Auto KM button to calculate based on last trip
+      document.getElementById('autoKmBtn').addEventListener('click', () => {
+        if (trips.length > 0) {
+          // Get the latest trip's end KM
+          const lastTrip = trips[0];
+          const lastEndKm = lastTrip.endKm;
+          
+          if (lastEndKm && !isNaN(lastEndKm)) {
+            startKmInput.value = lastEndKm;
+            endKmInput.value = lastEndKm + 50;
+            showToast(`Auto KM: ${lastEndKm} → ${lastEndKm + 50}`);
+          }
+        } else {
+          // No previous trips, use default values
+          startKmInput.value = 10550;
+          endKmInput.value = 10600;
+          showToast('Auto-filled default KM values');
+        }
+      });
+    }
+
+    // Set up all event listeners
+    function setupEventListeners() {
+      // Tab switching
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabId = tab.getAttribute('data-tab');
+          switchTab(tabId);
+        });
+      });
+      
+      // Dropdown toggle
+      document.getElementById('historyDropdown').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('historyDropdown').classList.toggle('active');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        document.getElementById('historyDropdown').classList.remove('active');
+      });
+      
+      // Add to lists
+      document.getElementById('addNameBtn').addEventListener('click', () => {
+        const val = (document.getElementById('name').value || '').trim();
+        if (!val) return;
+        if (!lists.names.includes(val)) {
+          lists.names.push(val);
+          lists.names.sort();
+          saveLists();
+          hydrateDatalist('namesList', lists.names);
+          showToast(`Added name: ${val}`);
+        } else {
+          showToast('Name already in list');
+        }
+      });
+
+      document.getElementById('addToBtn').addEventListener('click', () => {
+        const val = (document.getElementById('to').value || '').trim();
+        if (!val) return;
+        if (!lists.to.includes(val)) {
+          lists.to.push(val);
+          lists.to.sort();
+          saveLists();
+          hydrateDatalist('toList', lists.to);
+          showToast(`Added TO: ${val}`);
+        } else {
+          showToast('TO already in list');
+        }
+      });
+
+      document.getElementById('addDestinationBtn').addEventListener('click', () => {
+        const val = (document.getElementById('destination').value || '').trim();
+        if (!val) return;
+        if (!lists.destinations.includes(val)) {
+          lists.destinations.push(val);
+          lists.destinations.sort();
+          saveLists();
+          hydrateDatalist('destinationList', lists.destinations);
+          showToast(`Added destination: ${val}`);
+        } else {
+          showToast('Destination already in list');
+        }
+      });
+
+      // Form submit
+      document.getElementById('tripForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveTrip();
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        editingId = null;
+        setEditHint('');
+        clearForm();
+        // Auto-populate start KM after reset
+        autoPopulateStartKm();
+      });
+
+      document.getElementById('search').addEventListener('input', render);
+      document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+      document.getElementById('clearAllBtn').addEventListener('click', () => {
+        if (confirm('Delete ALL trips? This cannot be undone.')) {
+          trips = [];
+          saveTrips();
+          render();
+          showToast('All trips cleared');
+        }
+      });
+    }
+    
+    // Switch between tabs
+    function switchTab(tabId) {
+      // Update active tab
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+      
+      // Update active content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(`${tabId}Tab`).classList.add('active');
+    }
+
+    // Save trip (new or edit)
+    function saveTrip() {
+      const data = readForm();
+      const diff = +(data.endKm - data.startKm).toFixed(2);
+      
+      if (isNaN(diff) || diff < 0) {
+        alert('End KM must be greater than or equal to Start KM.');
+        return;
+      }
+
+      const durationMin = computeDurationMinutes(data.startTime, data.endTime);
+
+      if (editingId) {
+        // Update existing trip
+        const idx = trips.findIndex(t => t.id === editingId);
+        if (idx > -1) {
+          trips[idx] = { ...trips[idx], ...data, km: diff, durationMin };
+        }
+        editingId = null;
+        showToast('Trip updated successfully');
+      } else {
+        // Add new trip
+        trips.unshift({
+          id: crypto.randomUUID(),
+          createdAt: Date.now(),
+          km: diff,
+          durationMin,
+          ...data
+        });
+        showToast('Trip added successfully');
+      }
+      
+      saveTrips();
+      clearForm();
+      render();
+      
+      // Auto-populate start KM with the new last trip's end KM
+      if (!editingId) {
+        autoPopulateStartKm();
+      }
+      
+      // Switch to history tab after saving
+      switchTab('history');
+    }
+
+    // Read form data
+    function readForm() {
+      return {
+        date: document.getElementById('date').value,
+        name: document.getElementById('name').value.trim(),
+        pickup: document.getElementById('pickup').value.trim(),
+        to: document.getElementById('to').value.trim(),
+        destination: document.getElementById('destination').value.trim(),
+        returnLoc: document.getElementById('returnLoc').value.trim(),
+        startKm: parseFloat(document.getElementById('startKm').value),
+        startTime: document.getElementById('startTime').value,
+        endKm: parseFloat(document.getElementById('endKm').value),
+        endTime: document.getElementById('endTime').value,
+      };
+    }
+
+    // Fill form with trip data
+    function fillForm(t) {
+      document.getElementById('date').value = t.date || '';
+      document.getElementById('name').value = t.name || '';
+      document.getElementById('pickup').value = t.pickup || 'DAREHOUSE';
+      document.getElementById('to').value = t.to || '';
+      document.getElementById('destination').value = t.destination || '';
+      document.getElementById('returnLoc').value = t.returnLoc || 'DAREHOUSE';
+      document.getElementById('startKm').value = t.startKm ?? '';
+      document.getElementById('startTime').value = t.startTime ?? '';
+      document.getElementById('endKm').value = t.endKm ?? '';
+      document.getElementById('endTime').value = t.endTime ?? '';
+    }
+
+    // Clear form
+    function clearForm() {
+      fillForm({
+        date: new Date().toISOString().slice(0, 10),
+        pickup: 'DAREHOUSE',
+        returnLoc: 'DAREHOUSE'
+      });
+      document.getElementById('startKm').value = '';
+      document.getElementById('endKm').value = '';
+      document.getElementById('startTime').value = '';
+      document.getElementById('endTime').value = '';
+      document.getElementById('name').focus();
+      document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Save Trip';
+    }
+
+    // Set edit hint text
+    function setEditHint(text) {
+      const el = document.getElementById('editHint');
+      el.textContent = text;
+      document.getElementById('saveBtn').innerHTML = text
+        ? '<i class="fas fa-edit"></i> Update Trip'
+        : '<i class="fas fa-save"></i> Save Trip';
+    }
+
+    // Load trips from localStorage
+    function loadTrips() {
+      const raw = localStorage.getItem(STORE_KEY);
+      try {
+        return JSON.parse(raw || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    // Load lists from localStorage with defaults
+    function loadLists() {
+      const defaults = {
+        names: ['ASHIQ (SIR)', 'MM (SIR)', 'VENKET (SIR)', 'PETROL BUNK', 'SERVICE'],
+        to: ['AIRPORT', 'BOAT CLUB', 'PALLIKARANAI', 'ADAYAR'],
+        destinations: ['AIRPORT', 'BOAT CLUB', 'PALLIKARANAI', 'ADAYAR']
+      };
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORE_LISTS) || 'null');
+        if (!parsed) return defaults;
+        return {
+          names: unique([...defaults.names, ...(parsed.names || [])]).sort(),
+          to: unique([...defaults.to, ...(parsed.to || parsed.drops || [])]).sort(),
+          destinations: unique([...defaults.destinations, ...(parsed.destinations || parsed.drops || [])]).sort(),
+        };
+      } catch {
+        return defaults;
+      }
+    }
+
+    // Save trips to localStorage
+    function saveTrips() {
+      localStorage.setItem(STORE_KEY, JSON.stringify(trips));
+    }
+
+    // Save lists to localStorage
+    function saveLists() {
+      localStorage.setItem(STORE_LISTS, JSON.stringify(lists));
+    }
+
+    // Render the UI
+    function render() {
+      const q = (document.getElementById('search').value || '').toLowerCase().trim();
+      const filtered = !q ? trips : trips.filter(t =>
+        [t.name, t.pickup, t.to, t.destination, t.returnLoc, t.date]
+          .some(v => String(v || '').toLowerCase().includes(q))
+      );
+
+      // Update top stats
+      updateStats(filtered);
+
+      // Render table
+      renderTable(filtered);
+    }
+
+    // Update statistics display
+    function updateStats(filtered) {
+      const totalKm = filtered.reduce((a, b) => a + (Number(b.km) || 0), 0);
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayKm = filtered.filter(t => t.date === todayStr)
+        .reduce((a, b) => a + (Number(b.km) || 0), 0);
+      
+      document.getElementById('topStats').innerHTML = `
+        <div class="chip">
+          <i class="fas fa-list"></i>
+          <span>Trips: ${filtered.length}</span>
+        </div>
+        <div class="chip">
+          <i class="fas fa-road"></i>
+          <span>KM: ${totalKm.toFixed(2)}</span>
+        </div>
+        <div class="chip">
+          <i class="fas fa-calendar-day"></i>
+          <span>Today: ${todayKm.toFixed(2)}</span>
+        </div>
+      `;
+    }
+
+    // Render the trips table
+    function renderTable(filtered) {
+      const tbody = document.getElementById('tbody');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tbody.innerHTML = '';
+      
+      for (const t of filtered) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(t.date)}</td>
+          <td>${escapeHtml(t.name)}</td>
+          <td>${escapeHtml(t.pickup)}</td>
+          <td>${escapeHtml(t.destination)}</td>
+          <td class="right">${fmtNum(t.km)}</td>
+          <td class="center">
+            <button class="ghost small" title="Edit" aria-label="Edit" onclick='editTrip("${t.id}")'>
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="ghost small" title="Duplicate" aria-label="Duplicate" onclick='duplicateTrip("${t.id}")'>
+              <i class="fas fa-copy"></i>
+            </button>
+          </td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // Format number with 2 decimal places
+    function fmtNum(n) {
+      const x = Number(n);
+      return Number.isFinite(x) ? x.toFixed(2) : '-';
+    }
+
+    // Compute duration in minutes
+    function computeDurationMinutes(start, end) {
+      if (!start || !end) return NaN;
+      const [sh, sm] = start.split(':').map(Number);
+      const [eh, em] = end.split(':').map(Number);
+      if ([sh, sm, eh, em].some(v => Number.isNaN(v))) return NaN;
+      let s = sh * 60 + sm;
+      let e = eh * 60 + em;
+      if (e < s) e += 24 * 60; // handle overnight trips
+      return e - s;
+    }
+
+    // Populate datalist with options
+    function hydrateDatalist(id, arr) {
+      const dl = document.getElementById(id);
+      dl.innerHTML = '';
+      for (const v of arr) {
+        const o = document.createElement('option');
+        o.value = v;
+        dl.appendChild(o);
+      }
+    }
+
+    // Get unique values from array
+    function unique(arr) {
+      return Array.from(new Set(arr.filter(Boolean).map(s => String(s).trim())));
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // Show toast notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Row actions
+    window.editTrip = (id) => {
+      const t = trips.find(x => x.id === id);
+      if (!t) return;
+      editingId = id;
+      setEditHint('Editing trip...');
+      fillForm(t);
+      switchTab('form');
+      document.getElementById('name').focus();
+      showToast('Editing trip');
+    }
+
+    window.duplicateTrip = (id) => {
+      const t = trips.find(x => x.id === id);
+      if (!t) return;
+      const { id: _, createdAt: __, ...rest } = t;
+      trips.unshift({
+        id: crypto.randomUUID(),
+        createdAt: Date.now(),
+        ...rest
+      });
+      saveTrips();
+      render();
+      showToast('Trip duplicated');
+    }
+
+    // Export to CSV
+    function exportCSV() {
+      if (!trips.length) {
+        alert('Nothing to export');
+        return;
+      }
+      
+      const cols = ['Date', 'Name', 'Pickup', 'TO', 'Destination', 'Return', 'StartKm', 'StartTime', 'EndKm', 'EndTime', 'Duration', 'TripKm'];
+      const lines = [cols.join(',')];
+      
+      for (const t of trips) {
+        const row = [
+          t.date, t.name, t.pickup, t.to, t.destination, (t.returnLoc || ''),
+          t.startKm, t.startTime, t.endKm, t.endTime,
+          fmtDuration(t.durationMin), t.km
+        ].map(v => csvCell(v)).join(',');
+        lines.push(row);
+      }
+      
+      const blob = new Blob(["\uFEFF" + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement('a'), {
+        href: url,
+        download: `driver-trips-${new Date().toISOString().slice(0, 10)}.csv`
+      });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported successfully');
+    }
+
+    // Format duration
+    function fmtDuration(min) {
+      if (!Number.isFinite(min)) return '-';
+      const h = Math.floor(min / 60);
+      const m = Math.round(min % 60);
+      const hh = h > 0 ? `${h}h` : '';
+      const mm = `${m}m`;
+      return `${hh} ${mm}`.trim();
+    }
+
+    // Format cell for CSV
+    function csvCell(v) {
+      const s = String(v == null ? '' : v);
+      if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+
+    // Initialize the application when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
