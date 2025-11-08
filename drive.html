@@ -329,14 +329,15 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
-      min-width: 600px;
+      font-size: 13px;
+      min-width: 800px;
     }
     
     th, td {
-      padding: 12px 8px;
+      padding: 10px 6px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       text-align: left;
+      white-space: nowrap;
     }
     
     thead th {
@@ -346,7 +347,7 @@
       z-index: 1;
       font-weight: 600;
       color: #94a3b8;
-      white-space: nowrap;
+      font-size: 12px;
     }
     
     tbody tr:last-child td {
@@ -436,20 +437,118 @@
       opacity: 1;
     }
     
-    /* Swipeable tabs for mobile */
-    .swipe-area {
-      overflow: hidden;
-      position: relative;
+    /* Trip details view for mobile */
+    .trip-details {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .swipe-container {
+    .trip-header {
       display: flex;
-      transition: transform 0.3s ease;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .swipe-page {
-      min-width: 100%;
-      padding: 0;
+    .trip-date {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .trip-driver {
+      font-weight: 600;
+    }
+    
+    .trip-route {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius-sm);
+    }
+    
+    .trip-from, .trip-to {
+      text-align: center;
+      padding: 8px;
+    }
+    
+    .trip-arrow {
+      color: var(--accent);
+      font-size: 18px;
+    }
+    
+    .trip-location {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .trip-location-type {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+    
+    .trip-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .trip-stat {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--radius-sm);
+    }
+    
+    .trip-stat-value {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--accent);
+    }
+    
+    .trip-stat-label {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+    
+    .trip-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      justify-content: center;
+    }
+    
+    .view-btn {
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .view-btn.active {
+      background: var(--accent);
+      color: white;
     }
     
     /* Mobile optimizations */
@@ -470,6 +569,15 @@
       
       .card-content {
         padding: 12px;
+      }
+      
+      table {
+        font-size: 12px;
+        min-width: 900px;
+      }
+      
+      th, td {
+        padding: 8px 4px;
       }
     }
     
@@ -523,7 +631,7 @@
             </div>
 
             <div class="form-group">
-              <label for="name"><i class="fas fa-user"></i> User Name</label>
+              <label for="name"><i class="fas fa-user"></i> Driver Name</label>
               <div class="inline-input">
                 <div class="input-wrapper">
                   <input type="text" id="name" list="namesList" placeholder="Select or type name" required />
@@ -638,25 +746,46 @@
           </div>
         </div>
         <div class="card-content">
-          <div class="table-container">
-            <table aria-describedby="tableHelp">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>User</th>
-                  <th>From</th>
-                  <th>To</th>
-                  <th class="right">KM</th>
-                  <th class="center">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="tbody"></tbody>
-            </table>
-            <div id="emptyState" class="empty-state" style="display: none;">
-              <i class="fas fa-road"></i>
-              <h3>No Trips Recorded</h3>
-              <p>Add your first trip using the form</p>
+          <div class="view-toggle">
+            <button class="view-btn active" data-view="table">Table View</button>
+            <button class="view-btn" data-view="cards">Card View</button>
+          </div>
+          
+          <!-- Table View -->
+          <div class="table-view">
+            <div class="table-container">
+              <table aria-describedby="tableHelp">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Driver</th>
+                    <th>Start</th>
+                    <th>TO</th>
+                    <th>Destination</th>
+                    <th>Return</th>
+                    <th class="right">Start KM</th>
+                    <th>Start Time</th>
+                    <th class="right">End KM</th>
+                    <th>End Time</th>
+                    <th>Duration</th>
+                    <th class="right">Trip KM</th>
+                    <th class="center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
             </div>
+          </div>
+          
+          <!-- Card View -->
+          <div class="card-view" style="display: none;">
+            <div id="tripCards"></div>
+          </div>
+          
+          <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-road"></i>
+            <h3>No Trips Recorded</h3>
+            <p>Add your first trip using the form</p>
           </div>
           <p id="tableHelp" class="muted" style="margin-top:12px; font-size: 12px;">
             <i class="fas fa-lightbulb"></i> Tap a row's edit icon to modify or duplicate icon to copy.
@@ -669,12 +798,13 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const STORE_KEY = 'driverTrips.mobile.v1';
+    const STORE_KEY = 'driverTrips.mobile.v2';
     const STORE_LISTS = 'driverTrips.lists.mobile.v1';
 
     let trips = loadTrips();
     let lists = loadLists();
     let editingId = null;
+    let currentView = 'table';
 
     // Initialize the application
     function init() {
@@ -760,6 +890,14 @@
         tab.addEventListener('click', () => {
           const tabId = tab.getAttribute('data-tab');
           switchTab(tabId);
+        });
+      });
+      
+      // View switching
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const view = btn.getAttribute('data-view');
+          switchView(view);
         });
       });
       
@@ -856,6 +994,24 @@
         content.classList.remove('active');
       });
       document.getElementById(`${tabId}Tab`).classList.add('active');
+    }
+    
+    // Switch between table and card views
+    function switchView(view) {
+      currentView = view;
+      
+      // Update active view button
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`.view-btn[data-view="${view}"]`).classList.add('active');
+      
+      // Show/hide views
+      document.querySelector('.table-view').style.display = view === 'table' ? 'block' : 'none';
+      document.querySelector('.card-view').style.display = view === 'cards' ? 'block' : 'none';
+      
+      // Re-render the current view
+      render();
     }
 
     // Save trip (new or edit)
@@ -1008,8 +1164,12 @@
       // Update top stats
       updateStats(filtered);
 
-      // Render table
-      renderTable(filtered);
+      // Render based on current view
+      if (currentView === 'table') {
+        renderTable(filtered);
+      } else {
+        renderCards(filtered);
+      }
     }
 
     // Update statistics display
@@ -1055,7 +1215,14 @@
           <td>${escapeHtml(t.date)}</td>
           <td>${escapeHtml(t.name)}</td>
           <td>${escapeHtml(t.pickup)}</td>
+          <td>${escapeHtml(t.to)}</td>
           <td>${escapeHtml(t.destination)}</td>
+          <td>${escapeHtml(t.returnLoc || '—')}</td>
+          <td class="right">${fmtNum(t.startKm)}</td>
+          <td>${fmtTime12(t.startTime)}</td>
+          <td class="right">${fmtNum(t.endKm)}</td>
+          <td>${fmtTime12(t.endTime)}</td>
+          <td>${fmtDuration(t.durationMin)}</td>
           <td class="right">${fmtNum(t.km)}</td>
           <td class="center">
             <button class="ghost small" title="Edit" aria-label="Edit" onclick='editTrip("${t.id}")'>
@@ -1064,8 +1231,90 @@
             <button class="ghost small" title="Duplicate" aria-label="Duplicate" onclick='duplicateTrip("${t.id}")'>
               <i class="fas fa-copy"></i>
             </button>
+            <button class="ghost small danger" title="Delete" aria-label="Delete" onclick='deleteTrip("${t.id}")'>
+              <i class="fas fa-trash"></i>
+            </button>
           </td>`;
         tbody.appendChild(tr);
+      }
+    }
+
+    // Render trip cards for mobile view
+    function renderCards(filtered) {
+      const tripCards = document.getElementById('tripCards');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (filtered.length === 0) {
+        tripCards.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      tripCards.innerHTML = '';
+      
+      for (const t of filtered) {
+        const card = document.createElement('div');
+        card.className = 'trip-details';
+        card.innerHTML = `
+          <div class="trip-header">
+            <div class="trip-date">${escapeHtml(t.date)}</div>
+            <div class="trip-driver">${escapeHtml(t.name)}</div>
+          </div>
+          
+          <div class="trip-route">
+            <div class="trip-from">
+              <div class="trip-location">${escapeHtml(t.pickup)}</div>
+              <div class="trip-location-type">Start</div>
+            </div>
+            <div class="trip-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="trip-to">
+              <div class="trip-location">${escapeHtml(t.destination)}</div>
+              <div class="trip-location-type">Destination</div>
+            </div>
+          </div>
+          
+          <div class="trip-stats">
+            <div class="trip-stat">
+              <div class="trip-stat-value">${fmtNum(t.startKm)}</div>
+              <div class="trip-stat-label">Start KM</div>
+            </div>
+            <div class="trip-stat">
+              <div class="trip-stat-value">${fmtNum(t.endKm)}</div>
+              <div class="trip-stat-label">End KM</div>
+            </div>
+            <div class="trip-stat">
+              <div class="trip-stat-value">${fmtNum(t.km)}</div>
+              <div class="trip-stat-label">Trip KM</div>
+            </div>
+            <div class="trip-stat">
+              <div class="trip-stat-value">${fmtDuration(t.durationMin)}</div>
+              <div class="trip-stat-label">Duration</div>
+            </div>
+          </div>
+          
+          <div class="trip-details-grid">
+            <div><strong>TO:</strong> ${escapeHtml(t.to)}</div>
+            <div><strong>Return:</strong> ${escapeHtml(t.returnLoc || '—')}</div>
+            <div><strong>Start Time:</strong> ${fmtTime12(t.startTime)}</div>
+            <div><strong>End Time:</strong> ${fmtTime12(t.endTime)}</div>
+          </div>
+          
+          <div class="trip-actions">
+            <button class="ghost small" title="Edit" aria-label="Edit" onclick='editTrip("${t.id}")'>
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="ghost small" title="Duplicate" aria-label="Duplicate" onclick='duplicateTrip("${t.id}")'>
+              <i class="fas fa-copy"></i> Duplicate
+            </button>
+            <button class="ghost small danger" title="Delete" aria-label="Delete" onclick='deleteTrip("${t.id}")'>
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+        tripCards.appendChild(card);
       }
     }
 
@@ -1073,6 +1322,16 @@
     function fmtNum(n) {
       const x = Number(n);
       return Number.isFinite(x) ? x.toFixed(2) : '-';
+    }
+
+    // Format time as 12-hour format
+    function fmtTime12(t) {
+      if (!t) return '-';
+      const [h, m] = t.split(':').map(Number);
+      if (Number.isNaN(h) || Number.isNaN(m)) return t;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hh = ((h + 11) % 12) + 1;
+      return `${String(hh).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
     }
 
     // Compute duration in minutes
@@ -1144,6 +1403,19 @@
       saveTrips();
       render();
       showToast('Trip duplicated');
+    }
+
+    window.deleteTrip = (id) => {
+      if (!confirm('Delete this trip?')) return;
+      trips = trips.filter(t => t.id !== id);
+      saveTrips();
+      render();
+      if (editingId === id) {
+        editingId = null;
+        clearForm();
+        setEditHint('');
+      }
+      showToast('Trip deleted');
     }
 
     // Export to CSV
