@@ -1,9 +1,6 @@
 # Driver Trip Tracker - Mobile App
 - A comprehensive mobile-optimized web application for tracking driver trips, distances, and locations with an intuitive interface designed specifically for mobile devices.
-- 
 
-https://img.shields.io/badge/Mobile-Optimized-blue.svg
-https://img.shields.io/badge/PWA-Ready-orange.svg
 
 # 📱 Features
 # 🚗 Trip Management
